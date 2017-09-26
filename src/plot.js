@@ -98,6 +98,11 @@ function handleInput(input) {
   stats.trend = regression.correlation > 0.5 ? regression.gain : 0;
   stats.shape = regression.correlation > 0.5 ? 'Linear' : 'Non linear';
   stats.throughput = (prevWindow.length * stats.trend) / (prevWindowTime / 1000);
+    if (stats.throughput < 0 && stats.shape === 'Linear' && num > 0) {
+      stats.timeToZero = Math.abs(num / stats.throughput).toFixed(2) + "s";
+  } else {
+      stats.timeToZero = 'unknown'
+  }
 
   // Write the stats panel
   log.setItems([`Max: ${stats.max}`,
@@ -107,6 +112,7 @@ function handleInput(input) {
     `Points collected: ${stats.points}`,
     `Shape: ${stats.shape}`,
     `Throughput: ${stats.throughput.toFixed(2)}/s`,
+    `Time to zero: ${stats.timeToZero}`,
   ]);
   plot();
 }
