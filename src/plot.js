@@ -98,10 +98,10 @@ function handleInput(input) {
   stats.trend = regression.correlation > 0.5 ? regression.gain : 0;
   stats.shape = regression.correlation > 0.5 ? 'Linear' : 'Non linear';
   stats.throughput = (prevWindow.length * stats.trend) / (prevWindowTime / 1000);
-    if (stats.throughput < 0 && stats.shape === 'Linear' && num > 0) {
-      stats.timeToZero = Math.abs(num / stats.throughput).toFixed(2) + "s";
+  if (stats.throughput < 0 && stats.shape === 'Linear' && num > 0) {
+    stats.timeToZero = `${Math.abs(num / stats.throughput).toFixed(2)}s`;
   } else {
-      stats.timeToZero = 'unknown'
+    stats.timeToZero = 'unknown';
   }
 
   // Write the stats panel
@@ -119,19 +119,19 @@ function handleInput(input) {
 
 // Command handler
 function pollCommand() {
-    const command = spawn(program.command, {shell: true});
-    command.stdout.on('data', (data) => {
-        handleInput(data);
-        setTimeout(() => {
-            pollCommand();
-        }, program.pollingInterval)
-    });
+  const command = spawn(program.command, { shell: true });
+  command.stdout.on('data', (data) => {
+    handleInput(data);
+    setTimeout(() => {
+      pollCommand();
+    }, program.pollingInterval);
+  });
 }
 if (program.command) {
-    pollCommand()
+  pollCommand();
 }
 
 // Stdin handler
 rl.on('line', (input) => {
-    handleInput(input);
+  handleInput(input);
 });
