@@ -4,10 +4,13 @@ const blessed = require('blessed');
 const contrib = require('blessed-contrib');
 const program = require('commander');
 const linearRegression = require('./regression');
+const spawn = require('child_process').spawn;
 
 program
   .version('0.1.0')
   .option('-t, --title [title]', 'Set the title', 'Line')
+  .option('-c, --command [command]', 'Set command to watch and plot', 'Line')
+  .option('-i, --pollingInterval [n]', 'Set the polling interval for to command argument', 50)
   .option('-p, --points [n]', 'Set the maximum number of points to show in the screen (default:100)', 100)
   .option('-r, --regressionPoints [n]', 'Set the numbers of points to collect in order to calculate the throughput (default:16)', 16)
   .parse(process.argv);
@@ -69,8 +72,7 @@ const plot = () => {
   line.setData([histogram]);
   screen.render();
 };
-
-rl.on('line', (input) => {
+function handleInput(input) {
   const num = parseFloat(input);
   const now = new Date();
   points.log(`${now.toISOString()}: ${input}`);
@@ -107,4 +109,23 @@ rl.on('line', (input) => {
     `Throughput: ${stats.throughput.toFixed(2)}/s`,
   ]);
   plot();
+}
+
+// Command handler
+function pollCommand() {
+    const command = spawn(program.command, {shell: true});
+    command.stdout.on('data', (data) => {
+        handleInput(data);
+        setTimeout(() => {
+            pollCommand();
+        }, program.pollingInterval)
+    });
+}
+if (program.command) {
+    pollCommand()
+}
+
+// Stdin handler
+rl.on('line', (input) => {
+    handleInput(input);
 });
