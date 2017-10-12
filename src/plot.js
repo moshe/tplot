@@ -22,42 +22,22 @@ program.points = parseInt(program.points, 10);
 program.regressionPoints = parseInt(program.regressionPoints, 10);
 
 const lastNPoints = Array.from(Array(program.points).keys()).map(() => ({ num: undefined, at: start }));
-const stats = {
-  points: 0,
-  max: 0,
-  sum: 0,
-  min: Infinity,
-};
+const stats = { points: 0, max: 0, sum: 0, min: Infinity };
 
 /* eslint new-cap: ["error", { "newIsCap": false }] */
-const grid = new contrib.grid({
-  rows: 5,
-  cols: 5,
-  screen,
-});
+const grid = new contrib.grid({ rows: 5, cols: 5, screen });
 
 const line = grid.set(0, 0, 5, 4, contrib.line, {
   style: {
-    line: 'yellow',
-    text: 'green',
-    baseline: 'black',
+    line: 'white',
+    text: 'blue',
   },
-  xLabelPadding: 3,
-  xPadding: 5,
   label: program.title,
 });
 
-const log = grid.set(0, 4, 2, 1, contrib.log, {
-  fg: 'green',
-  selectedFg: 'green',
-  label: 'Statistics',
-});
+const log = grid.set(0, 4, 2, 1, contrib.log, { fg: 'white', label: 'Statistics' });
 
-const points = grid.set(2, 4, 3, 1, contrib.log, {
-  fg: 'green',
-  selectedFg: 'green',
-  label: 'Inputs',
-});
+const points = grid.set(2, 4, 3, 1, contrib.log, { fg: 'green', label: 'Inputs' });
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -73,10 +53,11 @@ const plot = () => {
   line.setData([histogram]);
   screen.render();
 };
+
 function handleInput(input) {
   const num = parseFloat(input);
   const now = new Date();
-  points.log(`${now.toISOString()}: ${input}`);
+  points.log(`${now.toTimeString().split(' ')[0]}: ${input}`);
 
   // Update the stack
   lastNPoints.push({ num, at: now });
