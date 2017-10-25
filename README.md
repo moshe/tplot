@@ -1,17 +1,17 @@
 ## tplot
 Tired of using `watch` for watching numbers in the terminal?  
 `watch "ls | wc -l"`  
-Tired of calculating decrease of items in queue over and over again?  
-Throughput ? Time left to zero?  
+Tired of calculating the decrease rate of items in queue over and over again?  
+Throughput? Time left to zero?  
 
 **tplot is the answer!**  
 ![alt text](https://github.com/moshe/tplot/blob/master/images/out4.gif?raw=true "Logo Title Text 1")
 
-tplot is a nodejs cli that reads other commands stdout (from stdin / self invoke) and plot it in the terminal!  
+tplot is a nodejs cli that reads other commands stdout (from stdin / self invoke) and plots it in the terminal!  
 In addition to the line chart you can see more stats about the series.
 
 ## stats:
-tplot is trying to guess the slope if the line by [linear regression](https://en.wikipedia.org/wiki/Ordinary_least_squares) 
+tplot is trying to guess the slope of the line using [linear regression](https://en.wikipedia.org/wiki/Ordinary_least_squares) 
 
 | name  | explain |
 | ------------- | ------------- |
