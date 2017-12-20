@@ -1,8 +1,8 @@
 ## tplot
 Tired of using `watch` for watching numbers in the terminal?  
-`watch "ls | wc -l"`  
+e.g `watch "ls | wc -l"`  
 Tired of calculating the decrease rate of items in queue over and over again?  
-Throughput? Time left to zero?  
+Trends? Throughput? Time left to zero?  
 
 **tplot is the answer!**  
 ![alt text](https://github.com/moshe/tplot/blob/master/images/out4.gif?raw=true "Logo Title Text 1")
@@ -39,7 +39,7 @@ tplot is trying to guess the slope of the line using [linear regression](https:/
 ## Usage:
 ```
 
-  Usage: plot [options]
+  Usage: tplot [options]
 
 
   Options:
@@ -55,7 +55,7 @@ tplot is trying to guess the slope of the line using [linear regression](https:/
 ```
 
 ## Installation:
-**via npm:**
+**via npm:**  
 `npm install -g tplot`
 
 **via docker:**
