@@ -1,28 +1,39 @@
 #!/usr/bin/env node
+
 const readline = require('readline');
 const blessed = require('blessed');
 const contrib = require('blessed-contrib');
 const program = require('commander');
-const linearRegression = require('./regression');
 const spawn = require('child_process').spawn;
+const graph = require('./line')
+
+const DEFAULT_POINTS = 200
 
 program
   .version('0.1.3')
   .option('-t, --title [title]', 'Set the title', 'Line')
   .option('-c, --command [command]', 'Set command to watch and plot', 'Line')
   .option('-i, --pollingInterval [n]', 'Set the polling interval for to command argument', 50)
-  .option('-p, --points [n]', 'Set the maximum number of points to show in the screen (default:100)', 200)
+  .option('-p, --points [n]', `Set the maximum number of points to show in the screen (default: ${DEFAULT_POINTS})`, DEFAULT_POINTS)
   .option('-g, --goal [n]', 'If looking at an linear line, set the goal you wish the line will get (default:0)', 0)
   .option('-r, --regressionPoints [n]', 'Set the numbers of points to collect in order to calculate the throughput (default:16)', 16)
   .parse(process.argv);
 
 const screen = blessed.screen();
 const start = new Date();
+
 program.points = parseInt(program.points, 10);
 program.regressionPoints = parseInt(program.regressionPoints, 10);
 
-const lastNPoints = Array.from(Array(program.points).keys()).map(() => ({ num: undefined, at: start }));
-const stats = { points: 0, max: 0, sum: 0, min: Infinity };
+const xAxis = [...Array(program.points).keys()]
+graph.init(
+  start,
+  xAxis,
+  program.regressionPoints,
+);
+
+graphs = {};
+var selectedGraph = undefined;
 
 /* eslint new-cap: ["error", { "newIsCap": false }] */
 const grid = new contrib.grid({ rows: 5, cols: 5, screen });
@@ -35,9 +46,9 @@ const line = grid.set(0, 0, 5, 4, contrib.line, {
   label: program.title,
 });
 
-const log = grid.set(0, 4, 2, 1, contrib.log, { fg: 'white', label: 'Statistics' });
+const statsPane = grid.set(0, 4, 2, 1, contrib.log, { fg: 'white', label: 'Statistics' });
 
-const points = grid.set(2, 4, 3, 1, contrib.log, { fg: 'green', label: 'Inputs' });
+const pointsPane = grid.set(2, 4, 3, 1, contrib.log, { fg: 'green', label: 'Inputs' });
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -46,64 +57,74 @@ const rl = readline.createInterface({
 });
 
 const plot = () => {
-  const histogram = {
-    x: Array.from(Array(program.points).keys()),
-    y: lastNPoints.map(x => x.num),
-  };
-  line.setData([histogram]);
+  line.setData(Object.keys(graphs).map((k) => graphs[k].getHistogram()));
   screen.render();
 };
 
-function handleInput(input) {
-  const num = parseFloat(input);
-  const now = new Date();
-  points.log(`${now.toTimeString().split(' ')[0]}: ${input}`);
+function getHumanReadableSeconds(seconds) {
+  var amount = seconds;
+  var unit = 's';
 
-  // Update the stack
-  lastNPoints.push({ num, at: now });
-  lastNPoints.shift();
-
-  // Simple metrics
-  stats.max = Math.max(stats.max, num);
-  stats.min = Math.min(stats.min, num);
-  stats.sum += num;
-  stats.points += 1;
-  stats.avg = parseInt(stats.sum / stats.points, 10);
-  stats.duration = (Date.now() - start.getTime()) / 1000;
-
-  // Get regression data
-  const prevWindow = lastNPoints.slice(lastNPoints.length - (program.regressionPoints * 2), -program.regressionPoints);
-  const prevWindowTime = Math.max(...prevWindow.map(x => parseInt(x.at.getTime(), 10))) - Math.min(...prevWindow.map(x => parseInt(x.at.getTime(), 10)));
-  const regression = linearRegression(Array.from(Array(prevWindow.length).keys()), prevWindow.map(x => x.num));
-
-  // Use gain only if corralates
-  stats.trend = regression.correlation > 0.5 ? regression.gain : 0;
-  stats.shape = regression.correlation > 0.5 ? 'Linear' : 'Non linear';
-  stats.throughput = (prevWindow.length * stats.trend) / (prevWindowTime / 1000);
-  if (stats.shape === 'Linear') {
-    if (stats.throughput < 0 && num < program.goal) {
-      stats.timeToGoal = 'Infinity';
-    } else if (stats.throughput < 0 && num > program.goal) {
-      stats.timeToGoal = `${Math.abs(num / stats.throughput).toFixed(2)}s`;
-    } else if (stats.throughput > 0 && num > program.goal) {
-      stats.timeToGoal = '0s (goal is passed)';
-    } else if (stats.throughput > 0 && num < program.goal) {
-      stats.timeToGoal = `${Math.abs(num / stats.throughput).toFixed(2)}s`;
+  if (amount > 60) {
+    amount /= 60;
+    unit = 'm';
+    if (amount > 60) {
+      amount /= 60;
+      unit = 'h';
+      if (amount > 24) {
+        amount /= 24;
+        unit = 'days'
+      }
     }
-  } else {
-    stats.timeToGoal = 'Unknown';
   }
 
-  // Write the stats panel
-  log.setItems([`Max: ${stats.max}`,
-    `Min: ${stats.min}`,
-    `Average: ${stats.avg}`,
-    `Duration: ${stats.duration}s`,
-    `Points collected: ${stats.points}`,
-    `Shape: ${stats.shape}`,
-    `Throughput: ${stats.throughput.toFixed(2)}/s`,
-    `Time to ${program.goal}: ${stats.timeToGoal}`,
-  ]);
+
+  return `${amount}${unit}`
+}
+
+function getStatsData(graph) {
+  graph.calcInsights();
+  return [
+    `Max: ${graph.max}`,
+    `Min: ${graph.min}`,
+    `Average: ${graph.avg}`,
+    `Duration: ${getHumanReadableSeconds(graph.duration)}`,
+    `Points collected: ${graph.totalPointsCount}`,
+    `Shape: ${graph.shape}`,
+    `Throughput: ${graph.throughput.toFixed(2)}/s`,
+    `Time to ${program.goal}: ${graph.timeToGoal}`,
+  ];
+}
+
+function parseInput(input) {
+  if (isNaN(input)) {
+     return JSON.parse(input);
+  } else {
+    return {'unnamed': parseFloat(input)};
+  }
+}
+
+function handleInput(input) {
+  const parsedInput = parseInput(input);
+  const now = new Date();
+  pointsPane.log(`${now.toTimeString().split(' ')[0]}: ${input}`);
+
+  Object.keys(parsedInput).map(k => {
+    if (graphs[k] === undefined) {
+      graphs[k] = new graph.Line();
+      if (selectedGraph === undefined) {
+        selectedGraph = k
+      }
+    }
+  })
+
+  Object.keys(graphs).map(k => {
+    graphs[k].update(now, parsedInput[k]);
+  })
+
+  if (selectedGraph !== undefined) {
+    statsPane.setItems(getStatsData(graphs[selectedGraph]));
+  }
   plot();
 }
 
@@ -117,6 +138,7 @@ function pollCommand() {
     }, program.pollingInterval);
   });
 }
+
 if (program.command) {
   pollCommand();
 }
