@@ -1,4 +1,4 @@
-const main = require('../mainGrid');
+const BasicGrid = require('../mainGrid');
 const readline = require('readline');
 
 module.exports = (program) => {
@@ -7,7 +7,7 @@ module.exports = (program) => {
     .alias('s')
     .description('Monitor stdin')
     .action((options) => {
-      const handleInput = main(options.parent);
+      const basicGrid = new BasicGrid(options.parent);
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
@@ -15,7 +15,7 @@ module.exports = (program) => {
       });
 
       rl.on('line', (input) => {
-        handleInput(input);
+        basicGrid.handleInput(input);
       });
     });
 };
