@@ -16,15 +16,10 @@ class BasicGrid {
     this.grid = new contrib.grid({ rows: 5, cols: 5, screen: this.screen });
 
     this.line = this.grid.set(0, 0, 5, 4, contrib.line, {
-      style: {
-        line: 'white',
-        text: 'blue',
-      },
+      style: { line: 'white', text: 'blue' },
       label: this.options.title,
     });
-
     this.log = this.grid.set(0, 4, 2, 1, contrib.log, { fg: 'white', label: 'Statistics' });
-
     this.points = this.grid.set(2, 4, 3, 1, contrib.log, { fg: 'green', label: 'Inputs' });
   }
   handleInput(input) {
@@ -44,12 +39,17 @@ class BasicGrid {
     this.stats.avg = parseInt(this.stats.sum / this.stats.points, 10);
     this.stats.duration = (Date.now() - this.start.getTime()) / 1000;
 
+    this.setRegressionData(num);
+    this.updateStats();
+    this.plot();
+  }
+  setRegressionData(num) {
     // Get regression data
     const prevWindow = this.lastNPoints.slice(this.lastNPoints.length - (this.options.regressionPoints * 2), -this.options.regressionPoints);
     const prevWindowTime = Math.max(...prevWindow.map(x => parseInt(x.at.getTime(), 10))) - Math.min(...prevWindow.map(x => parseInt(x.at.getTime(), 10)));
     const regression = linearRegression(Array.from(Array(prevWindow.length).keys()), prevWindow.map(x => x.num));
 
-    // Use gain only if corralates
+    // Use gain only if correlates
     this.stats.trend = regression.correlation > 0.5 ? regression.gain : 0;
     this.stats.shape = regression.correlation > 0.5 ? 'Linear' : 'Non linear';
     this.stats.throughput = (prevWindow.length * this.stats.trend) / (prevWindowTime / 1000);
@@ -66,8 +66,8 @@ class BasicGrid {
     } else {
       this.stats.timeToGoal = 'Unknown';
     }
-
-    // Write the stats panel
+  }
+  updateStats() {
     this.log.setItems([`Max: ${this.stats.max}`,
       `Min: ${this.stats.min}`,
       `Average: ${this.stats.avg}`,
@@ -77,7 +77,6 @@ class BasicGrid {
       `Throughput: ${this.stats.throughput.toFixed(2)}/s`,
       `Time to ${this.options.goal}: ${this.stats.timeToGoal}`,
     ]);
-    this.plot();
   }
   plot() {
     const histogram = {

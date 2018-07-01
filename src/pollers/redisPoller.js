@@ -9,8 +9,7 @@ module.exports = (program) => {
     .option('-i, --pollingInterval [n]', 'Set the polling interval for to command argument', 50)
     .option('-h, --host [name]', 'Connect to remote host', 'localhost')
     .action((list, options) => {
-      const client = redis.createClient({ host: options.host});
-      // const handleInput = BasicGrid(options.parent);
+      const client = redis.createClient({ host: options.host });
       const basicGrid = new BasicGrid(options.parent);
 
       function pollCommand() {
