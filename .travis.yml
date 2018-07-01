@@ -2,6 +2,5 @@ language: node_js
 sudo: false
 install:
   - npm install
-	- npm install --dev
 script:
   - npm test
