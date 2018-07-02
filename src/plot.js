@@ -18,3 +18,5 @@ stding(program);
 redis(program);
 
 program.parse(process.argv);
+
+if (!program.args.length) program.help(t => `  Error: Command is missing\n${t}`);
