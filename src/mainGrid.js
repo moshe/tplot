@@ -43,5 +43,8 @@ class BasicGrid {
     this.line.setData([histogram]);
     this.screen.render();
   }
+  static abort(error) {
+    throw new Error(error);
+  }
 }
 module.exports = BasicGrid;

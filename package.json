@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.266.1",
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.8.5",
     "commander": "^2.11.0",

@@ -5,6 +5,7 @@ const program = require('commander');
 const cmd = require('./plugins/cmd');
 const stding = require('./plugins/stdin');
 const redis = require('./plugins/redis');
+const sqs = require('./plugins/sqs');
 
 program
   .version(require('../package.json').version)
@@ -16,6 +17,7 @@ program
 cmd(program);
 stding(program);
 redis(program);
+sqs(program);
 
 program.parse(process.argv);
 
