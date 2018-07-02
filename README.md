@@ -5,9 +5,9 @@ Tired of calculating the decrease rate of items in queue over and over again?
 Trends? Throughput? Time left to zero?  
 
 **tplot is the answer!**  
-![alt text](https://github.com/moshe/tplot/blob/master/images/out4.gif?raw=true "Logo Title Text 1")
+![alt text](https://github.com/moshe/tplot/blob/master/images/out4.gif?raw=true "Demo")
 
-tplot is a nodejs cli that reads other commands stdout (from stdin / self invoke) and plots it in the terminal!  
+tplot is a modular nodejs cli that reads metric from lots of inputs and plots it in the terminal!  
 In addition to the line chart you can see more stats about the series.
 
 ## stats:
@@ -25,33 +25,38 @@ tplot is trying to guess the slope of the line using [linear regression](https:/
 
 ## Examples:
 #### Read numbers from stdin
-`command | tplot`
+`command | tplot stdin`
 
 #### Run command periodically and plot the output
-`tplot -c 'echo $RANDOM'`
+`tplot cmd 'echo $RANDOM'`
 
 #### Plot the number of files in the directory
-`plot -c 'ls|wc -l'`
+`tplot cmd 'ls|wc -l'`
 
 #### Plot redis list length
-`plot -c 'redis-cli llen events'`
+`tplot redis -h myserver events'`
 
 ## Usage:
 ```
 
-  Usage: tplot [options]
+  Usage: tplot [options] [command]
 
 
   Options:
 
     -V, --version               output the version number
     -t, --title [title]         Set the title
-    -c, --command [command]     Set command to watch and plot
-    -i, --pollingInterval [n]   Set the polling interval for to command argument
     -p, --points [n]            Set the maximum number of points to show in the screen (default:100)
     -g, --goal [n]              If looking at an linear line, set the goal you wish the line will get (default:0)
     -r, --regressionPoints [n]  Set the numbers of points to collect in order to calculate the throughput (default:16)
     -h, --help                  output usage information
+
+
+  Commands:
+
+    cmd|c [options] <command>  Monitor shell command output
+    stdin|s                    Monitor stdin
+    redis|r [options] <list>   Monitor redis list length
 ```
 
 ## Installation:
