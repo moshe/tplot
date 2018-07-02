@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-properties */
 
 function linearRegression(x, y) {
   let xSum = 0;
