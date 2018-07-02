@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 const program = require('commander');
-const cmdPoller = require('./pollers/cmdPoller');
-const stdinPoller = require('./pollers/stdinPoller');
-const redisPoller = require('./pollers/redisPoller');
+
+// Plugins
+const cmd = require('./plugins/cmd');
+const stding = require('./plugins/stdin');
+const redis = require('./plugins/redis');
 
 program
   .version(require('../package.json').version)
@@ -11,8 +13,8 @@ program
   .option('-g, --goal [n]', 'If looking at an linear line, set the goal you wish the line will get (default:0)', 0)
   .option('-r, --regressionPoints [n]', 'Set the numbers of points to collect in order to calculate the throughput (default:16)', 16);
 
-cmdPoller(program);
-stdinPoller(program);
-redisPoller(program);
+cmd(program);
+stding(program);
+redis(program);
 
 program.parse(process.argv);
