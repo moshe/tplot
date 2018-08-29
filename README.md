@@ -7,10 +7,10 @@ Trends? Throughput? Time left to zero?
 **tplot is the answer!**  
 ![alt text](https://github.com/moshe/tplot/blob/master/images/out4.gif?raw=true "Demo")
 
-tplot is a modular nodejs cli that reads metric from lots of inputs and plots it in the terminal!  
+tplot is a modular nodejs cli that reads metrics from lots of inputs and plots it in the terminal!  
 In addition to the line chart you can see more stats about the series.
 
-## stats:
+## Stats:
 tplot is trying to guess the slope of the line using [linear regression](https://en.wikipedia.org/wiki/Ordinary_least_squares) 
 
 | name  | explain |
@@ -22,6 +22,12 @@ tplot is trying to guess the slope of the line using [linear regression](https:/
 | Shape | Linear / non-linear |
 | Throughput | If shape is linear presents the throughput based on line's slope|
 | Time to ${program.goal} | The approximate time remained to the gaol (defaults to 0) |
+
+## Available plugins
+- redis
+- sqs
+- stdin
+- command
 
 ## Examples:
 #### Read numbers from stdin
