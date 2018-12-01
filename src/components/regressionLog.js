@@ -1,4 +1,5 @@
 const linearRegression = require('../regression');
+const prettyMs = require('pretty-ms');
 
 class RegressionLog {
   constructor(options, log) {
@@ -22,11 +23,11 @@ class RegressionLog {
       if (this.stats.throughput < 0 && num < this.options.goal) {
         this.stats.timeToGoal = 'Infinity';
       } else if (this.stats.throughput < 0 && num > this.options.goal) {
-        this.stats.timeToGoal = `${Math.abs(this.options.goal / this.stats.throughput).toFixed(2)}s`;
+        this.stats.timeToGoal = prettyMs(Math.abs(this.options.goal / this.stats.throughput) * 1000, { compact: false });
       } else if (this.stats.throughput > 0 && num > this.options.goal) {
         this.stats.timeToGoal = '0s (goal is passed)';
       } else if (this.stats.throughput > 0 && num < this.options.goal) {
-        this.stats.timeToGoal = `${Math.abs(this.options.goal / this.stats.throughput).toFixed(2)}s`;
+        this.stats.timeToGoal = prettyMs(Math.abs(this.options.goal / this.stats.throughput) * 1000, { compact: false });
       }
     } else {
       this.stats.timeToGoal = 'Unknown';

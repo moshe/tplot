@@ -1,6 +1,6 @@
 {
   "name": "tplot",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,7 @@
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.8.8",
     "commander": "^2.11.0",
+    "pretty-ms": "^4.0.0",
     "redis": "^2.8.0"
   },
   "bin": {
