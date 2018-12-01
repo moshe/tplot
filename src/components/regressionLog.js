@@ -22,11 +22,11 @@ class RegressionLog {
       if (this.stats.throughput < 0 && num < this.options.goal) {
         this.stats.timeToGoal = 'Infinity';
       } else if (this.stats.throughput < 0 && num > this.options.goal) {
-        this.stats.timeToGoal = `${Math.abs(num / this.stats.throughput).toFixed(2)}s`;
+        this.stats.timeToGoal = `${Math.abs(this.options.goal / this.stats.throughput).toFixed(2)}s`;
       } else if (this.stats.throughput > 0 && num > this.options.goal) {
         this.stats.timeToGoal = '0s (goal is passed)';
       } else if (this.stats.throughput > 0 && num < this.options.goal) {
-        this.stats.timeToGoal = `${Math.abs(num / this.stats.throughput).toFixed(2)}s`;
+        this.stats.timeToGoal = `${Math.abs(this.options.goal / this.stats.throughput).toFixed(2)}s`;
       }
     } else {
       this.stats.timeToGoal = 'Unknown';
