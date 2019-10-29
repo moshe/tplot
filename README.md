@@ -1,13 +1,13 @@
 ## tplot
-Tired of using `watch` for watching numbers in the terminal?  
-e.g `watch "ls | wc -l"`  
-Tired of calculating the decrease rate of items in queue over and over again?  
-Trends? Throughput? Time left to zero?  
+Tired of using `watch` for watching numbers in the terminal?
+e.g `watch "ls | wc -l"`
+Tired of calculating the decrease rate of items in queue over and over again?
+Trends? Throughput? Time left to zero?
 
-**tplot is the answer!**  
+**tplot is the answer!**
 ![alt text](https://github.com/moshe/tplot/blob/master/images/out4.gif?raw=true "Demo")
 
-tplot is a modular nodejs cli that reads metrics from lots of inputs and plots it in the terminal!  
+tplot is a modular nodejs cli that reads metrics from lots of inputs and plots it in the terminal!
 In addition to the line chart you can see more stats about the series.
 
 ## Stats:
@@ -66,7 +66,7 @@ tplot is trying to guess the slope of the line using [linear regression](https:/
 ```
 
 ## Installation:
-**via npm:**  
+**via npm:**
 `npm install -g tplot`
 
 **via docker:**
