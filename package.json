@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "eslint ."
+    "test": "eslint . -f junit > eslint.xml"
   },
   "author": "",
   "license": "ISC",

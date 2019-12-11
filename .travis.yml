@@ -5,5 +5,8 @@ node_js:
   - "lts/*"
 install:
   - npm install
+  - pip install --user git+https://github.com/moshe/pytest-tomato.git@debug#subdirectory=tomato-lib
 script:
   - npm test
+after_script:
+  - tomato eslint.xml

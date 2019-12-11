@@ -5,7 +5,7 @@ const RegressionLog = require('./components/regressionLog');
 
 class BasicGrid {
   constructor(options) {
-    this.start = new Date();
+    this.start = new Date()
     options.points = parseInt(options.points, 10);
     options.regressionPoints = parseInt(options.regressionPoints, 10);
     this.options = options;
