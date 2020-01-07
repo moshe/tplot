@@ -12,7 +12,7 @@
     "aws-sdk": "^2.266.1",
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.8.8",
-    "commander": "^2.11.0",
+    "commander": "^4.1.0",
     "redis": "^2.8.0"
   },
   "bin": {
